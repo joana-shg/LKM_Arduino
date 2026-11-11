@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LKPD Identifikasi Komponen Sistem Sampah Otomatis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef6f8;--surface:#fff;--ink:#14323f;--muted:#587482;--blue:#1d6fd8;--green:#14a373;--soft:#e3f1f6;--line:#c7dde5;--hint:#fff7d6;--hintink:#6b5200;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1c23;--surface:#16293240;--surface:#162932;--ink:#e4f1f5;--muted:#93b0bc;--blue:#5aa2ff;--green:#3fd1a0;--soft:#1d3642;--line:#2d4b59;--hint:#3a3210;--hintink:#f3dd8a}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1c23;--surface:#162932;--ink:#e4f1f5;--muted:#93b0bc;--blue:#5aa2ff;--green:#3fd1a0;--soft:#1d3642;--line:#2d4b59;--hint:#3a3210;--hintink:#f3dd8a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;line-height:1.6;font-size:16px}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+/* progress bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 4px 14px rgba(20,50,63,.08)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:4}
+.track{flex:1;height:14px;background:var(--soft);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width .5s}
+#pct{font-weight:800;min-width:48px;text-align:right}
+#msg{font-size:.85rem;color:var(--muted);flex-basis:100%;margin:0}
+.bar{flex-wrap:wrap}
+/* hero */
+header{background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;border-radius:22px;padding:28px 24px 22px;position:relative;overflow:hidden}
+header .chip{display:inline-block;background:rgba(255,255,255,.2);padding:3px 12px;border-radius:99px;font-size:.85rem;font-weight:600}
+h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(1.5rem,4.5vw,2.4rem);line-height:1.2;margin:10px 0 6px}
+header p{margin:0;opacity:.95}
+.circuit{position:absolute;right:-10px;top:-10px;width:170px;opacity:.22}
+.ident{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.ident label{font-weight:800;font-size:.9rem;display:block;margin-bottom:3px}
+.ident input{width:100%;padding:10px 12px;border-radius:10px;border:2px solid transparent;font:inherit;background:#fff;color:#14323f}
+.ident input:focus{outline:none;border-color:#ffe28a}
+section{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:1.3rem;margin:0 0 12px;color:var(--blue)}
+ul.goal{margin:0;padding-left:1.2rem}ul.goal li{margin:4px 0}
+/* checklist */
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;padding:0;margin:0;list-style:none}
+.items label{display:flex;gap:10px;align-items:center;background:var(--soft);border:2px solid transparent;border-radius:12px;padding:10px 12px;cursor:pointer;transition:.15s}
+.items label:has(input:checked){border-color:var(--green);background:color-mix(in srgb,var(--green) 16%,var(--surface))}
+.items input,.steps input{width:20px;height:20px;accent-color:var(--green);flex:none}
+.items .e{font-size:1.4rem}
+.items small{display:block;color:var(--muted);line-height:1.3}
+.steps{display:grid;gap:12px}
+.steps label{display:flex;gap:12px;background:var(--soft);border-radius:14px;padding:14px;cursor:pointer;border-left:6px solid var(--blue)}
+.steps label:has(input:checked){border-left-color:var(--green);opacity:.85}
+.steps label:has(input:checked) b{text-decoration:line-through}
+.steps input{margin-top:3px}
+/* table */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th{background:var(--blue);color:#fff;padding:10px;text-align:left;font-size:.92rem}
+th:first-child{border-radius:10px 0 0 0}th:last-child{border-radius:0 10px 0 0}
+td{border:1px solid var(--line);padding:6px;vertical-align:top}
+td.n{width:165px;background:var(--soft)}
+.clue{font-size:.8rem;color:var(--muted);margin:4px 2px 0}
+textarea{width:100%;font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);resize:none;overflow:hidden;min-height:44px;transition:border-color .2s}
+textarea:focus{outline:none;border-color:var(--blue)}
+textarea.ok{border-color:var(--green)}
+.hintbtn{background:none;border:1px dashed var(--blue);color:var(--blue);border-radius:99px;font:inherit;font-size:.78rem;font-weight:700;padding:2px 10px;cursor:pointer;margin-top:5px}
+.hint{display:none;background:var(--hint);color:var(--hintink);border-radius:8px;padding:6px 9px;font-size:.82rem;margin-top:5px}
+.hint.on{display:block}
+.q{margin-bottom:16px}
+.q p{font-weight:800;margin:0 0 6px}
+.q textarea{min-height:90px}
+/* buttons */
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;justify-content:center}
+button.b{border:0;border-radius:12px;padding:12px 22px;font:inherit;font-weight:800;cursor:pointer;color:#fff;transition:transform .12s}
+button.b:hover{transform:translateY(-2px)}
+.b.save{background:var(--green);color:#06281e}.b.print{background:var(--blue);color:#06142b}.b.reset{background:var(--soft);color:var(--ink)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #ffc83d;outline-offset:2px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;opacity:0;transition:.3s;z-index:9;font-weight:700;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#done{display:none;text-align:center;font-size:1.05rem;font-weight:800;color:var(--green);margin-top:14px}
+.pop{position:fixed;top:-30px;font-size:1.6rem;animation:fall 2.2s linear forwards;z-index:9;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+.sign{display:none}
+@media (max-width:640px){.ident{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.pop{display:none}}
+@media print{
+ body{background:#fff;color:#000;font-size:11pt}.wrap{padding:0;max-width:none}
+ .bar,.actions,.hintbtn,.hint,#toast,#done,.pop,body::before{display:none!important}
+ header{background:#fff!important;color:#000;border:2px solid #1d6fd8;border-radius:8px}.circuit{display:none}
+ .ident input{border:0;border-bottom:1px solid #000;border-radius:0;background:none}
+ section{break-inside:avoid-page;border:1px solid #999;background:#fff}
+ h2{color:#000}th{background:#ddd!important;color:#000}
+ table{min-width:0}.scroll{overflow:visible}
+ textarea{border:0;background:none;color:#000;overflow:visible}
+ .items label,.steps label{background:none;border:1px solid #bbb}
+ tr{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bar" role="status" aria-live="polite">
+  <span>📈</span><div class="track"><div class="fill" id="fill"></div></div><span id="pct">0%</span>
+  <p id="msg">Ayo mulai! Isi nama dan kelasmu dulu.</p>
+</div>
+
+<header>
+  <svg class="circuit" viewBox="0 0 120 120" fill="none" stroke="#fff" stroke-width="3" aria-hidden="true"><path d="M10 30h40v30h30M50 60v40h40M80 60h30M10 90h20"/><circle cx="10" cy="30" r="5"/><circle cx="80" cy="60" r="5"/><circle cx="110" cy="60" r="5"/><circle cx="90" cy="100" r="5"/></svg>
+  <span class="chip">LKPD Digital · Kelas SMA</span>
+  <h1>Identifikasi Komponen Elektronika Sistem Sampah Otomatis Berbasis Arduino UNO</h1>
+  <p>Kenali “otak”, “mata”, “otot”, dan “layar” dari tempat sampah pintarmu.</p>
+  <div class="ident">
+    <div><label for="nama">Nama Siswa</label><input id="nama" data-f placeholder="Tulis nama lengkapmu" autocomplete="name"></div>
+    <div><label for="kelas">Kelas</label><input id="kelas" data-f placeholder="Contoh: X IPA 1"></div>
+  </div>
+</header>
+
+<section>
+  <h2>🎯 Tujuan Pembelajaran</h2>
+  <p style="margin-top:0">Setelah mengerjakan LKPD ini, kamu diharapkan mampu:</p>
+  <ul class="goal">
+    <li>Menyebutkan nama dan fungsi utama setiap komponen pada sistem sampah otomatis.</li>
+    <li>Mencari spesifikasi teknis komponen dari datasheet dengan teliti.</li>
+    <li>Menjelaskan cara kerja antarmuka (interface) tiap komponen dengan Arduino UNO.</li>
+    <li>Menganalisis hubungan antar komponen dalam satu sistem yang utuh.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>🧰 Alat dan Bahan</h2>
+  <p style="margin-top:0;color:var(--muted)">Centang setiap item setelah kamu memastikan alat tersedia.</p>
+  <ul class="items">
+    <li><label><input type="checkbox" data-f id="a1"><span class="e">🟦</span><span>Arduino UNO + kabel USB</span></label></li>
+    <li><label><input type="checkbox" data-f id="a2"><span class="e">📡</span><span>Sensor ultrasonik HC-SR04</span></label></li>
+    <li><label><input type="checkbox" data-f id="a3"><span class="e">🧲</span><span>Sensor proximity capacitive</span></label></li>
+    <li><label><input type="checkbox" data-f id="a4"><span class="e">⚙️</span><span>Servo motor (mis. SG90)</span></label></li>
+    <li><label><input type="checkbox" data-f id="a5"><span class="e">🖥️</span><span>LCD 16x2 dengan modul I2C</span></label></li>
+    <li><label><input type="checkbox" data-f id="a6"><span class="e">🔌</span><span>Breadboard dan kabel jumper</span></label></li>
+    <li><label><input type="checkbox" data-f id="a7"><span class="e">📄</span><span>Laptop/HP untuk membuka datasheet</span></label></li>
+  </ul>
+</section>
+
+<section>
+  <h2>🪜 Langkah Kerja</h2>
+  <div class="steps">
+    <label><input type="checkbox" data-f id="s1"><span><b>Amati dan cari informasi.</b><br>Perhatikan bentuk fisik tiap komponen, lalu cari datasheet-nya untuk menemukan fungsi, tegangan kerja, dan jumlah pin.</span></label>
+    <label><input type="checkbox" data-f id="s2"><span><b>Isi tabel dan diskusikan.</b><br>Lengkapi tabel identifikasi di bawah dengan kata-katamu sendiri, lalu jawab tiga pertanyaan diskusi bersama kelompok.</span></label>
+  </div>
+</section>
+
+<section>
+  <h2>📋 Tabel Identifikasi Komponen</h2>
+  <p style="margin-top:0;color:var(--muted)">Tebak nama komponen dari petunjuk di kolom pertama. Tekan <b>Petunjuk</b> jika kamu butuh bantuan.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Nama Komponen</th><th>Fungsi Utama</th><th>Spesifikasi Teknis</th><th>Prinsip Kerja Antarmuka</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>💬 Pertanyaan Diskusi</h2>
+  <div class="q"><p>1. Sistem ini memakai dua sensor, yaitu HC-SR04 dan proximity capacitive. Mengapa tidak cukup satu sensor saja? Jelaskan peran masing-masing.</p><textarea data-f id="q1" placeholder="Tulis jawabanmu di sini…"></textarea></div>
+  <div class="q"><p>2. LCD 16x2 biasa membutuhkan banyak pin Arduino, sedangkan versi I2C hanya butuh dua pin data. Bagaimana hal ini bisa terjadi, dan apa keuntungannya bagi sistem?</p><textarea data-f id="q2" placeholder="Tulis jawabanmu di sini…"></textarea></div>
+  <div class="q"><p>3. Saat servo bergerak, LCD tiba-tiba berkedip atau Arduino ter-reset. Apa kemungkinan penyebabnya dan bagaimana solusinya?</p><textarea data-f id="q3" placeholder="Tulis jawabanmu di sini…"></textarea></div>
+</section>
+
+<p id="done">🎉 Hebat! Semua kolom sudah terisi. Jangan lupa simpan dan cetak.</p>
+
+<div class="actions">
+  <button class="b save" id="saveBtn">💾 Simpan Word</button>
+  <button class="b print" id="printBtn">🖨️ Cetak/Print</button>
+  <button class="b reset" id="resetBtn">🗑️ Hapus Semua</button>
+</div>
+</div>
+<div id="toast"></div>
+
+<script>
+(function(){
+var KEY='lkpd_sampah_otomatis_v1';
+var rows=[
+ ['Papan mikrokontroler berbasis ATmega328P; menjadi pusat kendali sistem.','Kendali yang membaca sensor dan memerintahkan aktuator.','Contoh: tegangan kerja, jumlah pin digital/analog, clock.','Cara terhubung ke sensor, servo, dan LCD.'],
+ ['Modul bermata dua (Trig dan Echo) yang “melihat” lewat gelombang suara.','Mengukur jarak benda, mis. tangan di depan tempat sampah.','Contoh: jangkauan ukur, tegangan, frekuensi 40 kHz.','Urutan pulsa Trig, lalu waktu pulsa Echo diukur.'],
+ ['Sensor tanpa sentuhan yang peka terhadap perubahan medan listrik.','Mendeteksi keberadaan benda (mis. sampah penuh atau tutup).','Contoh: tegangan, jenis output NPN/PNP, jarak deteksi.','Output ON/OFF dibaca sebagai sinyal digital.'],
+ ['Aktuator berputar terbatas dengan sudut dapat diatur; membuka-tutup penutup.','Menggerakkan tutup tempat sampah.','Contoh: tegangan, torsi, rentang sudut, kabel sinyal.','Posisi diatur lewat sinyal PWM dari pin Arduino.'],
+ ['Layar teks 2 baris 16 kolom dengan modul tambahan di belakangnya.','Menampilkan status, mis. “Terbuka” atau “Penuh”.','Contoh: tegangan, alamat I2C, jumlah karakter.','Hanya butuh dua jalur data: SDA dan SCL.']
+];
+var tb=document.getElementById('tb');
+rows.forEach(function(r,i){
+  var tr=document.createElement('tr'),n=i+1;
+  tr.innerHTML='<td class="n"><textarea data-f id="t'+n+'n" placeholder="Nama komponen?"></textarea><p class="clue">🔎 '+r[0]+'</p></td>'+
+   [1,2,3].map(function(k){
+     var names=['Fungsi utama','Spesifikasi teknis','Prinsip kerja antarmuka'];
+     var h=r[k];
+     return '<td><textarea data-f id="t'+n+'c'+k+'" placeholder="'+names[k-1]+'…"></textarea><button type="button" class="hintbtn">💡 Petunjuk</button><div class="hint">'+h+'</div></td>';
+   }).join('');
+  tb.appendChild(tr);
+});
+tb.addEventListener('click',function(e){
+  if(e.target.classList.contains('hintbtn')){e.target.nextElementSibling.classList.toggle('on')}
+});
+
+var fields=[].slice.call(document.querySelectorAll('[data-f]'));
+var textFields=fields.filter(function(f){return f.type!=='checkbox'});
+var fill=document.getElementById('fill'),pct=document.getElementById('pct'),msg=document.getElementById('msg'),done=document.getElementById('done'),toast=document.getElementById('toast');
+var celebrated=false,timer;
+
+function grow(t){t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'}
+function say(t){toast.textContent=t;toast.classList.add('on');clearTimeout(say.t);say.t=setTimeout(function(){toast.classList.remove('on')},1800)}
+function load(){
+  var d={};try{d=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  fields.forEach(function(f){
+    if(!(f.id in d))return;
+    if(f.type==='checkbox')f.checked=!!d[f.id];else f.value=d[f.id];
+  });
+}
+function collect(){var d={};fields.forEach(function(f){d[f.id]=f.type==='checkbox'?f.checked:f.value});return d}
+function save(manual){
+  try{localStorage.setItem(KEY,JSON.stringify(collect()));say(manual?'Tersimpan di browser ✔':'Tersimpan otomatis ✔')}
+  catch(e){say('Penyimpanan browser tidak tersedia')}
+}
+function progress(){
+  var filled=textFields.filter(function(f){var ok=f.value.trim().length>0;if(f.tagName==='TEXTAREA')f.classList.toggle('ok',ok);return ok}).length;
+  var p=Math.round(filled/textFields.length*100);
+  fill.style.width=p+'%';pct.textContent=p+'%';
+  var m=p===0?'Ayo mulai! Isi nama dan kelasmu dulu.':p<30?'Awal yang bagus, lanjutkan!':p<60?'Sudah hampir setengah jalan 💪':p<100?'Sedikit lagi selesai!':'Selesai! Kerja bagus 🎉';
+  msg.textContent=filled+' dari '+textFields.length+' kolom terisi. '+m;
+  done.style.display=p===100?'block':'none';
+  if(p===100&&!celebrated){celebrated=true;confetti()}
+  if(p<100)celebrated=false;
+}
+function confetti(){
+  var em=['🎉','⭐','💚','💙','🤖'];
+  for(var i=0;i<18;i++){(function(i){setTimeout(function(){
+    var s=document.createElement('span');s.className='pop';s.textContent=em[i%em.length];
+    s.style.left=Math.random()*95+'vw';document.body.appendChild(s);
+    setTimeout(function(){s.remove()},2300)},i*90)})(i)}
+}
+document.addEventListener('input',function(e){
+  var t=e.target;
+  if(t.tagName==='TEXTAREA')grow(t);
+  if(t.hasAttribute&&t.hasAttribute('data-f')){progress();clearTimeout(timer);timer=setTimeout(function(){save(false)},700)}
+});
+document.addEventListener('change',function(e){if(e.target.type==='checkbox'&&e.target.hasAttribute('data-f')){save(false)}});
+
+document.getElementById('saveBtn').onclick=function(){save(true)};
+document.getElementById('printBtn').onclick=function(){
+  document.querySelectorAll('textarea').forEach(grow);
+  window.print();
+};
+document.getElementById('resetBtn').onclick=function(){
+  if(!confirm('Hapus semua jawaban? Tindakan ini tidak bisa dibatalkan.'))return;
+  fields.forEach(function(f){if(f.type==='checkbox')f.checked=false;else f.value=''});
+  try{localStorage.removeItem(KEY)}catch(e){}
+  document.querySelectorAll('textarea').forEach(grow);progress();say('Semua jawaban dihapus');
+};
+window.addEventListener('beforeprint',function(){document.querySelectorAll('textarea').forEach(grow)});
+
+load();
+document.querySelectorAll('textarea').forEach(grow);
+progress();
+window.addEventListener('resize',function(){document.querySelectorAll('textarea').forEach(grow)});
+})();
+</script>
+</body>
+</html>
